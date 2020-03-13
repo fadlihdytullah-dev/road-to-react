@@ -8,7 +8,7 @@ const appInfo = {
   createdYear: 2018,
 };
 
-const list = [
+const listOfLinks = [
   {
     title: 'React',
     url: 'https://reactjs.org/',
@@ -43,13 +43,34 @@ const list = [
   },
 ];
 
+const listOfDiscussions = [
+  {
+    title: 'How react Works',
+    link: '',
+    author: '',
+    points: 3,
+    num_comments: 3,
+    objectID: 0,
+  },
+  {
+    title: 'CSS Mansory',
+    link: '',
+    points: 4,
+    author: '',
+    num_comments: 2,
+    objectID: 0,
+  },
+];
+
 function App() {
   return (
     <div className="container mt-2">
       <AppHeader />
       <Search />
       <Separator />
-      <List />
+      <List list={listOfLinks} />
+      <Separator />
+      <List list={listOfDiscussions} />
     </div>
   );
 }
@@ -76,8 +97,8 @@ function Search() {
   );
 }
 
-function List() {
-  return list.map(function(item) {
+function List(props) {
+  return props.list.map(function(item) {
     return (
       <div
         className="paper p-2 mb-2 flex justify-space-between align-items-center"
@@ -86,9 +107,11 @@ function List() {
           <span className="paper-title no-margin">
             <a href={item.url}>{item.title}</a>
           </span>
-          <span className="text-muted">
-            author: <span className="semibold">{item.author}</span>
-          </span>
+          {item.author && (
+            <span className="text-muted">
+              author: <span className="semibold">{item.author}</span>
+            </span>
+          )}
         </div>
         <div className="flex text-muted">
           <div className="flex align-items-center mr-2">
