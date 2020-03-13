@@ -63,10 +63,24 @@ const listOfDiscussions = [
 ];
 
 const App = () => {
+  const handleChange = event => {
+    console.log(event.target.value);
+  };
+
   return (
     <div className="container mt-2">
       <AppHeader />
-      <Search />
+
+      <div className="form-control">
+        <label htmlFor="search">Search: </label>
+        <input
+          id="search"
+          type="text"
+          className="text-input full-width"
+          onChange={handleChange}
+        />
+      </div>
+
       <Separator />
       <List list={listOfLinks} />
       <Separator />
@@ -81,13 +95,6 @@ const AppHeader = () => (
   <div>
     <h1>{appInfo.title}</h1>
     <h3 className="nobold">{appInfo.subtitle}</h3>
-  </div>
-);
-
-const Search = () => (
-  <div className="form-control">
-    <label htmlFor="search">Search: </label>
-    <input id="search" type="text" className="text-input full-width" />
   </div>
 );
 
