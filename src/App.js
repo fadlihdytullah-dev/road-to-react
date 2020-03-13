@@ -46,43 +46,64 @@ const list = [
 function App() {
   return (
     <div className="container mt-2">
-      <h1>{appInfo.title}</h1>
-      <h3 className="nobold">{appInfo.subtitle}</h3>
-      <div className="form-control">
-        <label htmlFor="search">Search: </label>
-        <input id="search" type="text" className="text-input" />
-      </div>
-      <hr className="separator" />
-
-      {list.map(function(item) {
-        return (
-          <div
-            className="paper p-2 mb-2 flex justify-space-between align-items-center"
-            key={item.objectID}>
-            <div>
-              <span className="paper-title no-margin">
-                <a href={item.url}>{item.title}</a>
-              </span>
-              <span className="text-muted">
-                author: <span className="semibold">{item.author}</span>
-              </span>
-            </div>
-            <div className="flex text-muted">
-              <div className="flex align-items-center mr-2">
-                <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
-                <span>{item.num_comments}</span>
-              </div>
-
-              <div className="flex align-items-center">
-                <ion-icon name="star-outline"></ion-icon>
-                <span>{item.points}</span>
-              </div>
-            </div>
-          </div>
-        );
-      })}
+      <AppHeader />
+      <Search />
+      <Separator />
+      <List />
     </div>
   );
+}
+
+function Separator() {
+  return <hr className="separator" />;
+}
+
+function AppHeader() {
+  return (
+    <div>
+      <h1>{appInfo.title}</h1>
+      <h3 className="nobold">{appInfo.subtitle}</h3>
+    </div>
+  );
+}
+
+function Search() {
+  return (
+    <div className="form-control">
+      <label htmlFor="search">Search: </label>
+      <input id="search" type="text" className="text-input full-width" />
+    </div>
+  );
+}
+
+function List() {
+  return list.map(function(item) {
+    return (
+      <div
+        className="paper p-2 mb-2 flex justify-space-between align-items-center"
+        key={item.objectID}>
+        <div>
+          <span className="paper-title no-margin">
+            <a href={item.url}>{item.title}</a>
+          </span>
+          <span className="text-muted">
+            author: <span className="semibold">{item.author}</span>
+          </span>
+        </div>
+        <div className="flex text-muted">
+          <div className="flex align-items-center mr-2">
+            <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+            <span>{item.num_comments}</span>
+          </div>
+
+          <div className="flex align-items-center">
+            <ion-icon name="star-outline"></ion-icon>
+            <span>{item.points}</span>
+          </div>
+        </div>
+      </div>
+    );
+  });
 }
 
 export default App;
