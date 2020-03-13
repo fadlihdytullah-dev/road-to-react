@@ -8,46 +8,79 @@ const appInfo = {
   createdYear: 2018,
 };
 
-const topics = [
-  'JavaScript',
-  'React',
-  'Node',
-  'Vue',
-  'Gatsby',
-  'NextJS',
-  'CSS',
+const list = [
+  {
+    title: 'React',
+    url: 'https://reactjs.org/',
+    author: 'Jordan Walke',
+    points: 4,
+    num_comments: 3,
+    objectID: 0,
+  },
+  {
+    title: 'Redux',
+    url: 'https://redux.js.org/',
+    author: 'Dan Abramov, Andrew Clark',
+    points: 5,
+    num_comments: 2,
+    objectID: 1,
+  },
+  {
+    title: 'Vue',
+    url: 'https://vuejs.org/',
+    author: 'Evan You',
+    points: 9,
+    num_comments: 4,
+    objectID: 2,
+  },
+  {
+    title: 'Gatsby',
+    url: 'https://www.gatsbyjs.org/',
+    author: 'Kyle Mathews',
+    points: 6,
+    num_comments: 2,
+    objectID: 3,
+  },
 ];
-
-function getCurrentYear() {
-  return new Date().getFullYear;
-}
 
 function App() {
   return (
-    <div className="wrap container-fluid mt-2">
+    <div className="container mt-2">
       <h1>{appInfo.title}</h1>
       <h3 className="nobold">{appInfo.subtitle}</h3>
-
       <div className="form-control">
         <label htmlFor="search">Search: </label>
         <input id="search" type="text" className="text-input" />
       </div>
+      <hr className="separator" />
 
-      <section id="topics" className="mb-4">
-        <h3 className="mb-2">Topics</h3>
-        {topics.map(topic => (
-          <span key={topic} className="inline-block p-1">
-            <span className="border border-rounded p-1">{topic}</span>
-          </span>
-        ))}
-      </section>
+      {list.map(function(item) {
+        return (
+          <div
+            className="paper p-2 mb-2 flex justify-space-between align-items-center"
+            key={item.objectID}>
+            <div>
+              <span className="paper-title no-margin">
+                <a href={item.url}>{item.title}</a>
+              </span>
+              <span className="text-muted">
+                author: <span className="semibold">{item.author}</span>
+              </span>
+            </div>
+            <div className="flex text-muted">
+              <div className="flex align-items-center mr-2">
+                <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+                <span>{item.num_comments}</span>
+              </div>
 
-      <footer>
-        <p>
-          This project created at {appInfo.createdYear} and now{' '}
-          {getCurrentYear()}
-        </p>
-      </footer>
+              <div className="flex align-items-center">
+                <ion-icon name="star-outline"></ion-icon>
+                <span>{item.points}</span>
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
