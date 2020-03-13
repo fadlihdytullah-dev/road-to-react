@@ -62,7 +62,7 @@ const listOfDiscussions = [
   },
 ];
 
-function App() {
+const App = () => {
   return (
     <div className="container mt-2">
       <AppHeader />
@@ -73,32 +73,26 @@ function App() {
       <List list={listOfDiscussions} />
     </div>
   );
-}
+};
 
-function Separator() {
-  return <hr className="separator" />;
-}
+const Separator = () => <hr className="separator" />;
 
-function AppHeader() {
-  return (
-    <div>
-      <h1>{appInfo.title}</h1>
-      <h3 className="nobold">{appInfo.subtitle}</h3>
-    </div>
-  );
-}
+const AppHeader = () => (
+  <div>
+    <h1>{appInfo.title}</h1>
+    <h3 className="nobold">{appInfo.subtitle}</h3>
+  </div>
+);
 
-function Search() {
-  return (
-    <div className="form-control">
-      <label htmlFor="search">Search: </label>
-      <input id="search" type="text" className="text-input full-width" />
-    </div>
-  );
-}
+const Search = () => (
+  <div className="form-control">
+    <label htmlFor="search">Search: </label>
+    <input id="search" type="text" className="text-input full-width" />
+  </div>
+);
 
-function List(props) {
-  return props.list.map(function(item) {
+const List = props =>
+  props.list.map(function(item) {
     return (
       <div
         className="paper p-2 mb-2 flex justify-space-between align-items-center"
@@ -127,6 +121,5 @@ function List(props) {
       </div>
     );
   });
-}
 
 export default App;
