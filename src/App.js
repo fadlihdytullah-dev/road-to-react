@@ -8,61 +8,42 @@ const appInfo = {
   createdYear: 2018,
 };
 
-const listOfLinks = [
-  {
-    title: 'React',
-    url: 'https://reactjs.org/',
-    author: 'Jordan Walke',
-    points: 4,
-    num_comments: 3,
-    objectID: 0,
-  },
-  {
-    title: 'Redux',
-    url: 'https://redux.js.org/',
-    author: 'Dan Abramov, Andrew Clark',
-    points: 5,
-    num_comments: 2,
-    objectID: 1,
-  },
-  {
-    title: 'Vue',
-    url: 'https://vuejs.org/',
-    author: 'Evan You',
-    points: 9,
-    num_comments: 4,
-    objectID: 2,
-  },
-  {
-    title: 'Gatsby',
-    url: 'https://www.gatsbyjs.org/',
-    author: 'Kyle Mathews',
-    points: 6,
-    num_comments: 2,
-    objectID: 3,
-  },
-];
-
-const listOfDiscussions = [
-  {
-    title: 'How react Works',
-    link: '',
-    author: '',
-    points: 3,
-    num_comments: 3,
-    objectID: 0,
-  },
-  {
-    title: 'CSS Mansory',
-    link: '',
-    points: 4,
-    author: '',
-    num_comments: 2,
-    objectID: 0,
-  },
-];
-
 const App = () => {
+  const stories = [
+    {
+      title: 'React',
+      url: 'https://reactjs.org/',
+      author: 'Jordan Walke',
+      points: 4,
+      num_comments: 3,
+      objectID: 0,
+    },
+    {
+      title: 'Redux',
+      url: 'https://redux.js.org/',
+      author: 'Dan Abramov, Andrew Clark',
+      points: 5,
+      num_comments: 2,
+      objectID: 1,
+    },
+    {
+      title: 'Vue',
+      url: 'https://vuejs.org/',
+      author: 'Evan You',
+      points: 9,
+      num_comments: 4,
+      objectID: 2,
+    },
+    {
+      title: 'Gatsby',
+      url: 'https://www.gatsbyjs.org/',
+      author: 'Kyle Mathews',
+      points: 6,
+      num_comments: 2,
+      objectID: 3,
+    },
+  ];
+
   const handleChange = event => {
     console.log(event.target.value);
   };
@@ -82,9 +63,7 @@ const App = () => {
       </div>
 
       <Separator />
-      <List list={listOfLinks} />
-      <Separator />
-      <List list={listOfDiscussions} />
+      <List list={stories} />
     </div>
   );
 };
@@ -108,11 +87,9 @@ const List = props =>
           <span className="paper-title no-margin">
             <a href={item.url}>{item.title}</a>
           </span>
-          {item.author && (
-            <span className="text-muted">
-              author: <span className="semibold">{item.author}</span>
-            </span>
-          )}
+          <span className="text-muted">
+            author: <span className="semibold">{item.author}</span>
+          </span>
         </div>
         <div className="flex text-muted">
           <div className="flex align-items-center mr-2">
