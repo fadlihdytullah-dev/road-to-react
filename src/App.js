@@ -8,6 +8,16 @@ const appInfo = {
   createdYear: 2018,
 };
 
+const useSemiPersistentState = (key, initValue) => {
+  const [value, setValue] = useState(localStorage.getItem(key) || initValue);
+
+  useEffect(() => {
+    localStorage.setItem(key, value);
+  }, [key, value]);
+
+  return [value, setValue];
+};
+
 const App = () => {
   const stories = [
     {
@@ -44,19 +54,10 @@ const App = () => {
     },
   ];
 
-  const [searchTerm, setSearchTerm] = useState(
-    localStorage.getItem('search') || 'react'
+  const [searchTerm, setSearchTerm] = useSemiPersistentState(
+    'search',
+    'Gatsby'
   );
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    localStorage.setItem('search', searchTerm);
-  }, [searchTerm]);
-
-  // componentDidMount and componentDidUpdate
-  useEffect(() => {
-    document.title = count + ' times.';
-  });
 
   const handleSearch = event => {
     setSearchTerm(event.target.value);
@@ -68,12 +69,6 @@ const App = () => {
 
   return (
     <div className="container mt-2">
-      <p>You clicked {count} times.</p>
-      <button
-        className="button primary"
-        onClick={() => setCount(count => count + 1)}>
-        Click
-      </button>
       <AppHeader />
       <Search search={searchTerm} onSearch={handleSearch} />
       <Separator />
