@@ -70,7 +70,12 @@ const App = () => {
   return (
     <div className="container mt-2">
       <AppHeader />
-      <Search search={searchTerm} onSearch={handleSearch} />
+      <InputLabel
+        id="search"
+        label="Search"
+        value={searchTerm}
+        onInputChange={handleSearch}
+      />
       <Separator />
       <List list={searchedStories} />
     </div>
@@ -80,21 +85,21 @@ const App = () => {
 const Separator = () => <hr className="separator" />;
 
 const AppHeader = () => (
-  <div>
+  <React.Fragment>
     <h1>{appInfo.title}</h1>
     <h3 className="nobold">{appInfo.subtitle}</h3>
-  </div>
+  </React.Fragment>
 );
 
-const Search = props => (
+const InputLabel = ({id, label, value, type = 'text', onInputChange}) => (
   <div className="form-control">
-    <label htmlFor="search">Search: </label>
+    <label htmlFor={id}>{label}</label>
     <input
-      id="search"
-      type="text"
+      id={id}
+      type={type}
       className="text-input full-width"
-      value={props.search}
-      onChange={props.onSearch}
+      value={value}
+      onChange={onInputChange}
     />
   </div>
 );
