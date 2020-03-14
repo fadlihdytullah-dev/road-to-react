@@ -44,16 +44,22 @@ const App = () => {
     },
   ];
 
+  const [searchTerm, setSearchTerm] = useState('React');
+
   const handleSearch = event => {
-    console.log(event.target.value);
+    setSearchTerm(event.target.value);
   };
+
+  const searchedStories = stories.filter(story =>
+    story.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="container mt-2">
       <AppHeader />
-      <Search onSearch={handleSearch} />
+      <Search search={searchTerm} onSearch={handleSearch} />
       <Separator />
-      <List list={stories} />
+      <List list={searchedStories} />
     </div>
   );
 };
@@ -67,35 +73,18 @@ const AppHeader = () => (
   </div>
 );
 
-const Search = props => {
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const handleChange = event => {
-    setSearchTerm(event.target.value);
-
-    props.onSearch(event);
-  };
-
-  return (
-    <div className="view">
-      <div className="form-control">
-        <label htmlFor="search">Search: </label>
-        <input
-          id="search"
-          type="text"
-          className="text-input full-width"
-          onChange={handleChange}
-        />
-      </div>
-
-      {searchTerm && (
-        <p>
-          You search for <strong>{searchTerm}</strong>
-        </p>
-      )}
-    </div>
-  );
-};
+const Search = props => (
+  <div className="form-control">
+    <label htmlFor="search">Search: </label>
+    <input
+      id="search"
+      type="text"
+      className="text-input full-width"
+      value={props.search}
+      onChange={props.onSearch}
+    />
+  </div>
+);
 
 const List = props =>
   props.list.map(function(item) {
