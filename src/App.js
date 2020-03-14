@@ -70,12 +70,11 @@ const App = () => {
   return (
     <div className="container mt-2">
       <AppHeader />
-      <InputLabel
-        id="search"
-        label="Search"
-        value={searchTerm}
-        onInputChange={handleSearch}
-      />
+
+      <InputLabel id="search" value={searchTerm} onInputChange={handleSearch}>
+        <strong>Search</strong>
+      </InputLabel>
+
       <Separator />
       <List list={searchedStories} />
     </div>
@@ -91,9 +90,9 @@ const AppHeader = () => (
   </React.Fragment>
 );
 
-const InputLabel = ({id, label, value, type = 'text', onInputChange}) => (
+const InputLabel = ({id, value, type = 'text', children, onInputChange}) => (
   <div className="form-control">
-    <label htmlFor={id}>{label}</label>
+    <label htmlFor={id}>{children}</label>
     <input
       id={id}
       type={type}
