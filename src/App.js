@@ -44,15 +44,19 @@ const App = () => {
     },
   ];
 
-  console.log('render');
-
   const [searchTerm, setSearchTerm] = useState(
     localStorage.getItem('search') || 'react'
   );
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     localStorage.setItem('search', searchTerm);
   }, [searchTerm]);
+
+  // componentDidMount and componentDidUpdate
+  useEffect(() => {
+    document.title = count + ' times.';
+  });
 
   const handleSearch = event => {
     setSearchTerm(event.target.value);
@@ -64,6 +68,12 @@ const App = () => {
 
   return (
     <div className="container mt-2">
+      <p>You clicked {count} times.</p>
+      <button
+        className="button primary"
+        onClick={() => setCount(count => count + 1)}>
+        Click
+      </button>
       <AppHeader />
       <Search search={searchTerm} onSearch={handleSearch} />
       <Separator />
