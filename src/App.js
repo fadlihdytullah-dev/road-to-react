@@ -44,9 +44,10 @@ const initialStories = [
 ];
 
 const getAsyncStories = () =>
-  new Promise(resolve => {
+  new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve({data: {stories: initialStories}});
+      // reject('Error');
     }, 2000);
   });
 
@@ -62,11 +63,21 @@ const useSemiPersistentState = (key, initValue) => {
 
 const App = () => {
   const [stories, setStories] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
-    getAsyncStories().then(result => {
-      setStories(result.data.stories);
-    });
+    setIsLoading(true);
+
+    getAsyncStories()
+      .then(result => {
+        setStories(result.data.stories);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsError(true);
+        setIsLoading(false);
+      });
   }, []);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -87,6 +98,17 @@ const App = () => {
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const renderedStories = () => {
+    if (isError) {
+      return <Error />;
+    }
+    if (isLoading) {
+      return <Loading />;
+    }
+
+    return <List list={searchedStories} onRemoveItem={handleRemoveItem} />;
+  };
+
   return (
     <div className="container mt-2">
       <AppHeader />
@@ -100,7 +122,7 @@ const App = () => {
 
       <Separator />
 
-      <List list={searchedStories} onRemoveItem={handleRemoveItem} />
+      {renderedStories()}
     </div>
   );
 };
@@ -113,6 +135,12 @@ const AppHeader = () => (
     <h3 className="nobold">{appInfo.subtitle}</h3>
   </React.Fragment>
 );
+
+const Loading = () => <p className="text-muted">Loading ...</p>;
+
+const Error = () => <h2>Oops, something went wrong.</h2>;
+
+const EmptyData = () => <p>Sorry, there is no data.</p>;
 
 const InputLabel = ({
   id,
@@ -149,10 +177,15 @@ const InputLabel = ({
 
 const Text = ({children}) => <span>{children}</span>;
 
-const List = ({list, onRemoveItem}) =>
-  list.map(item => (
+const List = ({list, onRemoveItem}) => {
+  if (!list.length) {
+    return <EmptyData />;
+  }
+
+  return list.map(item => (
     <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
   ));
+};
 
 const Item = ({item, onRemoveItem}) => (
   <div className="flex">
