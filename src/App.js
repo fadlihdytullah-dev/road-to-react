@@ -44,7 +44,9 @@ const App = () => {
     },
   ];
 
-  const [searchTerm, setSearchTerm] = useState('React');
+  console.log('render');
+
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearch = event => {
     setSearchTerm(event.target.value);
@@ -87,32 +89,29 @@ const Search = props => (
 );
 
 const List = props =>
-  props.list.map(function(item) {
-    return (
-      <div
-        className="paper p-2 mb-2 flex justify-space-between align-items-center"
-        key={item.objectID}>
-        <div>
-          <span className="paper-title no-margin">
-            <a href={item.url}>{item.title}</a>
-          </span>
-          <span className="text-muted">
-            author: <span className="semibold">{item.author}</span>
-          </span>
-        </div>
-        <div className="flex text-muted">
-          <div className="flex align-items-center mr-2">
-            <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
-            <span>{item.num_comments}</span>
-          </div>
+  props.list.map(item => <Item key={item.objectID} item={item} />);
 
-          <div className="flex align-items-center">
-            <ion-icon name="star-outline"></ion-icon>
-            <span>{item.points}</span>
-          </div>
-        </div>
+const Item = ({item}) => (
+  <div className="paper p-2 mb-2 flex justify-space-between align-items-center">
+    <div>
+      <span className="paper-title no-margin">
+        <a href={item.url}>{item.title}</a>
+      </span>
+      <span className="text-muted">
+        author: <span className="semibold">{item.author}</span>
+      </span>
+    </div>
+    <div className="flex text-muted">
+      <div className="flex align-items-center mr-2">
+        <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+        <span>{item.num_comments}</span>
       </div>
-    );
-  });
 
+      <div className="flex align-items-center">
+        <ion-icon name="star-outline"></ion-icon>
+        <span>{item.points}</span>
+      </div>
+    </div>
+  </div>
+);
 export default App;
