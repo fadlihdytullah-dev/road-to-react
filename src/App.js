@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './App.css';
 import './FlexboxGrid.css';
 
@@ -44,8 +44,10 @@ const App = () => {
     },
   ];
 
+  const [searchTerm, setSearchTerm] = useState('');
+
   const handleChange = event => {
-    console.log(event.target.value);
+    setSearchTerm(event.target.value);
   };
 
   return (
@@ -61,6 +63,12 @@ const App = () => {
           onChange={handleChange}
         />
       </div>
+
+      {searchTerm && (
+        <p>
+          You search for <strong>{searchTerm}</strong>
+        </p>
+      )}
 
       <Separator />
       <List list={stories} />
