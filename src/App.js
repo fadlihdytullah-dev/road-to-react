@@ -43,6 +43,13 @@ const initialStories = [
   },
 ];
 
+const getAsyncStories = () =>
+  new Promise(resolve => {
+    setTimeout(() => {
+      resolve({data: {stories: initialStories}});
+    }, 2000);
+  });
+
 const useSemiPersistentState = (key, initValue) => {
   const [value, setValue] = useState(localStorage.getItem(key) || initValue);
 
@@ -54,7 +61,13 @@ const useSemiPersistentState = (key, initValue) => {
 };
 
 const App = () => {
-  const [stories, setStories] = useState(initialStories);
+  const [stories, setStories] = useState([]);
+
+  useEffect(() => {
+    getAsyncStories().then(result => {
+      setStories(result.data.stories);
+    });
+  }, []);
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -86,6 +99,7 @@ const App = () => {
       />
 
       <Separator />
+
       <List list={searchedStories} onRemoveItem={handleRemoveItem} />
     </div>
   );
