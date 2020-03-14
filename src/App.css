@@ -232,6 +232,9 @@ ion-icon {
 .align-self-flex-start {
   align-self: flex-start;
 }
+.align-self-center {
+  align-self: center;
+}
 .flex-1 {
   flex: 1;
 }

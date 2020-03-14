@@ -8,6 +8,41 @@ const appInfo = {
   createdYear: 2018,
 };
 
+const initialStories = [
+  {
+    title: 'React',
+    url: 'https://reactjs.org/',
+    author: 'Jordan Walke',
+    points: 4,
+    num_comments: 3,
+    objectID: 0,
+  },
+  {
+    title: 'Redux',
+    url: 'https://redux.js.org/',
+    author: 'Dan Abramov, Andrew Clark',
+    points: 5,
+    num_comments: 2,
+    objectID: 1,
+  },
+  {
+    title: 'Vue',
+    url: 'https://vuejs.org/',
+    author: 'Evan You',
+    points: 9,
+    num_comments: 4,
+    objectID: 2,
+  },
+  {
+    title: 'Gatsby',
+    url: 'https://www.gatsbyjs.org/',
+    author: 'Kyle Mathews',
+    points: 6,
+    num_comments: 2,
+    objectID: 3,
+  },
+];
+
 const useSemiPersistentState = (key, initValue) => {
   const [value, setValue] = useState(localStorage.getItem(key) || initValue);
 
@@ -19,48 +54,20 @@ const useSemiPersistentState = (key, initValue) => {
 };
 
 const App = () => {
-  const stories = [
-    {
-      title: 'React',
-      url: 'https://reactjs.org/',
-      author: 'Jordan Walke',
-      points: 4,
-      num_comments: 3,
-      objectID: 0,
-    },
-    {
-      title: 'Redux',
-      url: 'https://redux.js.org/',
-      author: 'Dan Abramov, Andrew Clark',
-      points: 5,
-      num_comments: 2,
-      objectID: 1,
-    },
-    {
-      title: 'Vue',
-      url: 'https://vuejs.org/',
-      author: 'Evan You',
-      points: 9,
-      num_comments: 4,
-      objectID: 2,
-    },
-    {
-      title: 'Gatsby',
-      url: 'https://www.gatsbyjs.org/',
-      author: 'Kyle Mathews',
-      points: 6,
-      num_comments: 2,
-      objectID: 3,
-    },
-  ];
+  const [stories, setStories] = useState(initialStories);
 
-  const [searchTerm, setSearchTerm] = useSemiPersistentState(
-    'search',
-    'Gatsby'
-  );
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearch = event => {
     setSearchTerm(event.target.value);
+  };
+
+  const handleRemoveItem = item => {
+    const newStories = stories.filter(
+      story => item.objectID !== story.objectID
+    );
+
+    setStories(newStories);
   };
 
   const searchedStories = stories.filter(story =>
@@ -77,15 +84,9 @@ const App = () => {
         value={searchTerm}
         onInputChange={handleSearch}
       />
-      <InputLabel
-        id="search"
-        label="Search"
-        isFocused
-        value={searchTerm}
-        onInputChange={handleSearch}
-      />
+
       <Separator />
-      <List list={searchedStories} />
+      <List list={searchedStories} onRemoveItem={handleRemoveItem} />
     </div>
   );
 };
@@ -134,30 +135,46 @@ const InputLabel = ({
 
 const Text = ({children}) => <span>{children}</span>;
 
-const List = props =>
-  props.list.map(item => <Item key={item.objectID} item={item} />);
+const List = ({list, onRemoveItem}) =>
+  list.map(item => (
+    <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
+  ));
 
-const Item = ({item}) => (
-  <div className="paper p-2 mb-2 flex justify-space-between align-items-center">
-    <div>
-      <span className="paper-title no-margin">
-        <a href={item.url}>{item.title}</a>
-      </span>
-      <span className="text-muted">
-        author: <span className="semibold">{item.author}</span>
-      </span>
-    </div>
-    <div className="flex text-muted">
-      <div className="flex align-items-center mr-2">
-        <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
-        <span>{item.num_comments}</span>
+const Item = ({item, onRemoveItem}) => {
+  function handleRemoveItem() {
+    onRemoveItem(item);
+  }
+
+  return (
+    <div className="flex">
+      <div className="paper p-2 mb-2 flex flex-1 justify-space-between align-items-center">
+        <div>
+          <span className="paper-title no-margin">
+            <a href={item.url}>{item.title}</a>
+          </span>
+          <span className="text-muted">
+            author: <span className="semibold">{item.author}</span>
+          </span>
+        </div>
+        <div className="flex text-muted">
+          <div className="flex align-items-center mr-2">
+            <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+            <span>{item.num_comments}</span>
+          </div>
+
+          <div className="flex align-items-center">
+            <ion-icon name="star-outline"></ion-icon>
+            <span>{item.points}</span>
+          </div>
+        </div>
       </div>
 
-      <div className="flex align-items-center">
-        <ion-icon name="star-outline"></ion-icon>
-        <span>{item.points}</span>
+      <div className="pl-2  align-self-center">
+        <button className="button small link" onClick={handleRemoveItem}>
+          Dismiss
+        </button>
       </div>
     </div>
-  </div>
-);
+  );
+};
 export default App;
