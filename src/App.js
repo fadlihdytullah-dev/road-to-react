@@ -71,10 +71,19 @@ const App = () => {
     <div className="container mt-2">
       <AppHeader />
 
-      <InputLabel id="search" value={searchTerm} onInputChange={handleSearch}>
-        <strong>Search</strong>
-      </InputLabel>
-
+      <InputLabel
+        id="search"
+        label="Search"
+        value={searchTerm}
+        onInputChange={handleSearch}
+      />
+      <InputLabel
+        id="search"
+        label="Search"
+        isFocused
+        value={searchTerm}
+        onInputChange={handleSearch}
+      />
       <Separator />
       <List list={searchedStories} />
     </div>
@@ -90,18 +99,40 @@ const AppHeader = () => (
   </React.Fragment>
 );
 
-const InputLabel = ({id, value, type = 'text', children, onInputChange}) => (
-  <div className="form-control">
-    <label htmlFor={id}>{children}</label>
-    <input
-      id={id}
-      type={type}
-      className="text-input full-width"
-      value={value}
-      onChange={onInputChange}
-    />
-  </div>
-);
+const InputLabel = ({
+  id,
+  value,
+  type = 'text',
+  label,
+  isFocused = false,
+  onInputChange,
+}) => {
+  const inputRef = React.useRef();
+
+  useEffect(() => {
+    if (isFocused && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isFocused]);
+
+  return (
+    <div className="form-control">
+      <label htmlFor={id}>
+        <Text>{label}</Text>
+      </label>
+      <input
+        ref={inputRef}
+        id={id}
+        type={type}
+        className="text-input full-width"
+        value={value}
+        onChange={onInputChange}
+      />
+    </div>
+  );
+};
+
+const Text = ({children}) => <span>{children}</span>;
 
 const List = props =>
   props.list.map(item => <Item key={item.objectID} item={item} />);
