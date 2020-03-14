@@ -140,41 +140,38 @@ const List = ({list, onRemoveItem}) =>
     <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
   ));
 
-const Item = ({item, onRemoveItem}) => {
-  function handleRemoveItem() {
-    onRemoveItem(item);
-  }
-
-  return (
-    <div className="flex">
-      <div className="paper p-2 mb-2 flex flex-1 justify-space-between align-items-center">
-        <div>
-          <span className="paper-title no-margin">
-            <a href={item.url}>{item.title}</a>
-          </span>
-          <span className="text-muted">
-            author: <span className="semibold">{item.author}</span>
-          </span>
-        </div>
-        <div className="flex text-muted">
-          <div className="flex align-items-center mr-2">
-            <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
-            <span>{item.num_comments}</span>
-          </div>
-
-          <div className="flex align-items-center">
-            <ion-icon name="star-outline"></ion-icon>
-            <span>{item.points}</span>
-          </div>
-        </div>
+const Item = ({item, onRemoveItem}) => (
+  <div className="flex">
+    <div className="paper p-2 mb-2 flex flex-1 justify-space-between align-items-center">
+      <div>
+        <span className="paper-title no-margin">
+          <a href={item.url}>{item.title}</a>
+        </span>
+        <span className="text-muted">
+          author: <span className="semibold">{item.author}</span>
+        </span>
       </div>
+      <div className="flex text-muted">
+        <div className="flex align-items-center mr-2">
+          <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+          <span>{item.num_comments}</span>
+        </div>
 
-      <div className="pl-2  align-self-center">
-        <button className="button small link" onClick={handleRemoveItem}>
-          Dismiss
-        </button>
+        <div className="flex align-items-center">
+          <ion-icon name="star-outline"></ion-icon>
+          <span>{item.points}</span>
+        </div>
       </div>
     </div>
-  );
-};
+
+    <div className="pl-2  align-self-center">
+      <button
+        className="button small link"
+        onClick={onRemoveItem.bind(null, item)}>
+        Dismiss
+      </button>
+    </div>
+  </div>
+);
+
 export default App;
