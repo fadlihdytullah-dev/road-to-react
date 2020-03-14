@@ -165,9 +165,7 @@ const Item = ({item, onRemoveItem}) => (
     </div>
 
     <div className="pl-2  align-self-center">
-      <button
-        className="button small link"
-        onClick={onRemoveItem.bind(null, item)}>
+      <button className="button small link" onClick={() => onRemoveItem(item)}>
         Dismiss
       </button>
     </div>
