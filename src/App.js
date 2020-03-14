@@ -44,16 +44,40 @@ const App = () => {
     },
   ];
 
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const handleChange = event => {
-    setSearchTerm(event.target.value);
+  const handleSearch = event => {
+    console.log(event.target.value);
   };
 
   return (
     <div className="container mt-2">
       <AppHeader />
+      <Search onSearch={handleSearch} />
+      <Separator />
+      <List list={stories} />
+    </div>
+  );
+};
 
+const Separator = () => <hr className="separator" />;
+
+const AppHeader = () => (
+  <div>
+    <h1>{appInfo.title}</h1>
+    <h3 className="nobold">{appInfo.subtitle}</h3>
+  </div>
+);
+
+const Search = props => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleChange = event => {
+    setSearchTerm(event.target.value);
+
+    props.onSearch(event);
+  };
+
+  return (
+    <div className="view">
       <div className="form-control">
         <label htmlFor="search">Search: </label>
         <input
@@ -69,21 +93,9 @@ const App = () => {
           You search for <strong>{searchTerm}</strong>
         </p>
       )}
-
-      <Separator />
-      <List list={stories} />
     </div>
   );
 };
-
-const Separator = () => <hr className="separator" />;
-
-const AppHeader = () => (
-  <div>
-    <h1>{appInfo.title}</h1>
-    <h3 className="nobold">{appInfo.subtitle}</h3>
-  </div>
-);
 
 const List = props =>
   props.list.map(function(item) {
