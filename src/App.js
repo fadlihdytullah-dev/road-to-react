@@ -138,8 +138,10 @@ const App = () => {
     setSearchTerm(event.target.value);
   };
 
-  const handleSearchSubmit = () => {
+  const handleSearchSubmit = event => {
     setUrl(`${API_ENDPOINT}${searchTerm}`);
+
+    event.preventDefault();
   };
 
   const handleRemoveItem = item => {
@@ -149,24 +151,11 @@ const App = () => {
   return (
     <div className="container mt-2">
       <AppHeader />
-      <div className="flex align-items-center">
-        <div className="flex-1">
-          <InputLabel
-            id="search"
-            value={searchTerm}
-            onInputChange={handleSearchInput}
-          />
-        </div>
-        <div className="pl-2">
-          <button
-            disabled={!searchTerm}
-            className="button small secondary align-self-center"
-            onClick={handleSearchSubmit}>
-            Search
-          </button>
-        </div>
-      </div>
-
+      <SearchForm
+        searchTerm={searchTerm}
+        onSearchInput={handleSearchInput}
+        onSearchSubmit={handleSearchSubmit}
+      />
       <Separator />
       {stories.isError && <Error />}
       {stories.isLoading && <Loading />}
@@ -184,6 +173,26 @@ const AppHeader = () => (
     <h1>{appInfo.title}</h1>
     <h3 className="nobold">{appInfo.subtitle}</h3>
   </React.Fragment>
+);
+
+const SearchForm = ({searchTerm, onSearchInput, onSearchSubmit}) => (
+  <form className="flex align-items-center" onSubmit={onSearchSubmit}>
+    <div className="flex-1">
+      <InputLabel
+        id="search"
+        value={searchTerm}
+        onInputChange={onSearchInput}
+      />
+    </div>
+    <div className="pl-2">
+      <button
+        type="submit"
+        disabled={!searchTerm}
+        className="button small secondary align-self-center">
+        Search
+      </button>
+    </div>
+  </form>
 );
 
 const Loading = () => <p className="text-muted">Loading ...</p>;
