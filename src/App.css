@@ -9,7 +9,7 @@ html {
 }
 
 body {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Roboto', sans-serif;
   color: #3d5866;
 
   background: rgb(239, 243, 245);
@@ -51,9 +51,8 @@ ion-icon {
 }
 
 .paper .paper-title {
-  font-size: 1.85rem;
+  font-size: 1.7rem;
   margin-bottom: 0.4rem;
-  font-weight: 600;
   display: block;
 }
 
@@ -106,6 +105,7 @@ ion-icon {
   width: fit-content !important;
   max-width: fit-content !important;
   margin: 0 0.5rem;
+  cursor: pointer;
 }
 .button.link:hover {
   text-decoration: underline;

@@ -46,7 +46,7 @@ const initialStories = [
 const getAsyncStories = () =>
   new Promise((resolve, reject) => {
     setTimeout(() => {
-      // resolve({data: {stories: initialStories}});
+      resolve({data: {stories: initialStories}});
       reject('Error');
     }, 2000);
   });
@@ -84,7 +84,7 @@ const storiesReducer = (state, action) => {
     case 'REMOVE_STORY':
       return {
         ...state,
-        data: state.stories.filter(
+        data: state.data.filter(
           story => story.objectID !== action.payload.objectID
         ),
       };
@@ -93,6 +93,8 @@ const storiesReducer = (state, action) => {
       throw new Error();
   }
 };
+
+const API_ENDPOINT = 'http://hn.algolia.com/api/v1/search?query=';
 
 const App = () => {
   const [stories, dispatchStories] = useReducer(storiesReducer, {
@@ -104,16 +106,12 @@ const App = () => {
   useEffect(() => {
     dispatchStories({type: 'STORIES_FETCH_INIT'});
 
-    getAsyncStories()
+    fetch(`${API_ENDPOINT}react`)
+      .then(response => response.json())
       .then(result => {
-        dispatchStories({
-          type: 'STORIES_FETCH_SUCCESS',
-          payload: result.data.stories,
-        });
+        dispatchStories({type: 'STORIES_FETCH_SUCCESS', payload: result.hits});
       })
-      .catch(() => {
-        dispatchStories({type: 'STORIES_FETCH_FAILURE'});
-      });
+      .catch(() => dispatchStories({type: 'STORIES_FETCH_FAILURE'}));
   }, []);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -213,7 +211,7 @@ const Item = ({item, onRemoveItem}) => (
   <div className="flex">
     <div className="paper p-2 mb-2 flex flex-1 justify-space-between align-items-center">
       <div>
-        <span className="paper-title no-margin">
+        <span className="paper-title">
           <a href={item.url}>{item.title}</a>
         </span>
         <span className="text-muted">
@@ -235,7 +233,7 @@ const Item = ({item, onRemoveItem}) => (
 
     <div className="pl-2  align-self-center">
       <button className="button small link" onClick={() => onRemoveItem(item)}>
-        Dismiss
+        <ion-icon name="trash-outline"></ion-icon>
       </button>
     </div>
   </div>
