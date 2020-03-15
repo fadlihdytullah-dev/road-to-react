@@ -65,6 +65,10 @@ ion-icon {
   border: none;
   transition: 0.3s all;
 }
+.button:disabled,
+.button[disabbled] {
+  background: #c7c7c7 !important;
+}
 .button.small {
   font-size: 1.2rem;
   min-width: 8rem;

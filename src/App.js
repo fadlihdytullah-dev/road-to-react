@@ -110,49 +110,58 @@ const App = () => {
     isError: false,
   });
 
-  const [searchTerm, setSearchTerm] = React.useState('');
+  const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
+  const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
 
   // This will be differ when the saerchTerm changed, run the side effect
   const handleFetchStories = React.useCallback(() => {
-    if (!searchTerm) {
-      return;
-    }
-
     dispatchStories({type: 'STORIES_FETCH_INIT'});
 
-    fetch(`${API_ENDPOINT}${searchTerm}`)
+    fetch(url)
       .then(response => response.json())
       .then(result => {
         dispatchStories({type: 'STORIES_FETCH_SUCCESS', payload: result.hits});
       })
       .catch(() => dispatchStories({type: 'STORIES_FETCH_FAILURE'}));
-  }, [searchTerm]);
+  }, [url]);
 
   React.useEffect(() => {
     handleFetchStories();
   }, [handleFetchStories]);
 
-  const handleSearch = event => {
+  const handleSearchInput = event => {
     setSearchTerm(event.target.value);
+  };
+
+  const handleSearchSubmit = () => {
+    setUrl(`${API_ENDPOINT}${searchTerm}`);
   };
 
   const handleRemoveItem = item => {
     dispatchStories({type: 'REMOVE_STORY', payload: item});
   };
 
-  const searchedStories = stories.data.filter(story =>
-    story.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <div className="container mt-2">
       <AppHeader />
-      <InputLabel
-        id="search"
-        label="Search"
-        value={searchTerm}
-        onInputChange={handleSearch}
-      />
+      <div className="flex align-items-center">
+        <div className="flex-1">
+          <InputLabel
+            id="search"
+            value={searchTerm}
+            onInputChange={handleSearchInput}
+          />
+        </div>
+        <div className="pl-2">
+          <button
+            disabled={!searchTerm}
+            className="button small secondary align-self-center"
+            onClick={handleSearchSubmit}>
+            Search
+          </button>
+        </div>
+      </div>
+
       <Separator />
       {stories.isError && <Error />}
       {stories.isLoading && <Loading />}
@@ -182,7 +191,7 @@ const InputLabel = ({
   id,
   value,
   type = 'text',
-  label,
+  label = '',
   isFocused = false,
   onInputChange,
 }) => {
@@ -196,9 +205,11 @@ const InputLabel = ({
 
   return (
     <div className="form-control">
-      <label htmlFor={id}>
-        <Text>{label}</Text>
-      </label>
+      {label && (
+        <label htmlFor={id}>
+          <Text>{label}</Text>
+        </label>
+      )}
       <input
         ref={inputRef}
         id={id}
