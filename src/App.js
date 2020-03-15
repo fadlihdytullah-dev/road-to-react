@@ -74,10 +74,28 @@ const storiesReducer = (state, action) => {
   }
 };
 
+const initialStateCount = {count: 0};
+const countReducer = (state, action) => {
+  switch (action.type) {
+    case 'INCREMENT':
+      return {count: state.count + 1};
+
+    case 'DECREMENT':
+      return {count: state.count - 1};
+
+    default:
+      throw new Error();
+  }
+};
+
 const App = () => {
   const [stories, dispatchStories] = useReducer(storiesReducer, []);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [countState, dispatchCount] = useReducer(
+    countReducer,
+    initialStateCount
+  );
 
   useEffect(() => {
     setIsLoading(true);
@@ -121,6 +139,16 @@ const App = () => {
   return (
     <div className="container mt-2">
       <AppHeader />
+
+      <p>
+        <strong>Count: {countState.count}</strong>
+      </p>
+      <button onClick={() => dispatchCount({type: 'INCREMENT'})}>
+        Increment
+      </button>
+      <button onClick={() => dispatchCount({type: 'DECREMENT'})}>
+        Decrement
+      </button>
 
       <InputLabel
         id="search"
