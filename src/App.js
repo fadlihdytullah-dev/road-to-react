@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useReducer} from 'react';
+import React from 'react';
 import './App.css';
 import './FlexboxGrid.css';
 
@@ -57,9 +57,11 @@ const getAsyncStories = () =>
   });
 
 const useSemiPersistentState = (key, initValue) => {
-  const [value, setValue] = useState(localStorage.getItem(key) || initValue);
+  const [value, setValue] = React.useState(
+    localStorage.getItem(key) || initValue
+  );
 
-  useEffect(() => {
+  React.useEffect(() => {
     localStorage.setItem(key, value);
   }, [key, value]);
 
@@ -102,15 +104,16 @@ const storiesReducer = (state, action) => {
 const API_ENDPOINT = 'http://hn.algolia.com/api/v1/search?query=';
 
 const App = () => {
-  const [stories, dispatchStories] = useReducer(storiesReducer, {
+  const [stories, dispatchStories] = React.useReducer(storiesReducer, {
     data: [],
     isLoading: false,
     isError: false,
   });
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = React.useState('');
 
-  useEffect(() => {
+  // This will be differ when the saerchTerm changed, run the side effect
+  const handleFetchStories = React.useCallback(() => {
     if (!searchTerm) {
       return;
     }
@@ -124,6 +127,10 @@ const App = () => {
       })
       .catch(() => dispatchStories({type: 'STORIES_FETCH_FAILURE'}));
   }, [searchTerm]);
+
+  React.useEffect(() => {
+    handleFetchStories();
+  }, [handleFetchStories]);
 
   const handleSearch = event => {
     setSearchTerm(event.target.value);
@@ -181,7 +188,7 @@ const InputLabel = ({
 }) => {
   const inputRef = React.useRef();
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (isFocused && inputRef.current) {
       inputRef.current.focus();
     }
