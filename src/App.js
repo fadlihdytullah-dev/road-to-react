@@ -46,8 +46,8 @@ const initialStories = [
 const getAsyncStories = () =>
   new Promise((resolve, reject) => {
     setTimeout(() => {
-      resolve({data: {stories: initialStories}});
-      // reject('Error');
+      // resolve({data: {stories: initialStories}});
+      reject('Error');
     }, 2000);
   });
 
@@ -63,25 +63,31 @@ const useSemiPersistentState = (key, initValue) => {
 
 const storiesReducer = (state, action) => {
   switch (action.type) {
-    case 'SET_STORIES':
-      return action.payload;
+    case 'STORIES_FETCH_INIT':
+      return {
+        ...state,
+        isLoading: true,
+        isError: false,
+      };
+
+    case 'STORIES_FETCH_SUCCESS':
+      return {
+        ...state,
+        isLoading: false,
+        isError: false,
+        data: action.payload,
+      };
+
+    case 'STORIES_FETCH_FAILURE':
+      return {...state, isLoading: false, isError: true};
 
     case 'REMOVE_STORY':
-      return state.filter(story => story.objectID !== action.payload.objectID);
-
-    default:
-      throw new Error();
-  }
-};
-
-const initialStateCount = {count: 0};
-const countReducer = (state, action) => {
-  switch (action.type) {
-    case 'INCREMENT':
-      return {count: state.count + 1};
-
-    case 'DECREMENT':
-      return {count: state.count - 1};
+      return {
+        ...state,
+        data: state.stories.filter(
+          story => story.objectID !== action.payload.objectID
+        ),
+      };
 
     default:
       throw new Error();
@@ -89,25 +95,24 @@ const countReducer = (state, action) => {
 };
 
 const App = () => {
-  const [stories, dispatchStories] = useReducer(storiesReducer, []);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [countState, dispatchCount] = useReducer(
-    countReducer,
-    initialStateCount
-  );
+  const [stories, dispatchStories] = useReducer(storiesReducer, {
+    data: [],
+    isLoading: false,
+    isError: false,
+  });
 
   useEffect(() => {
-    setIsLoading(true);
+    dispatchStories({type: 'STORIES_FETCH_INIT'});
 
     getAsyncStories()
       .then(result => {
-        dispatchStories({type: 'SET_STORIES', payload: result.data.stories});
-        setIsLoading(false);
+        dispatchStories({
+          type: 'STORIES_FETCH_SUCCESS',
+          payload: result.data.stories,
+        });
       })
       .catch(() => {
-        setIsError(true);
-        setIsLoading(false);
+        dispatchStories({type: 'STORIES_FETCH_FAILURE'});
       });
   }, []);
 
@@ -121,45 +126,25 @@ const App = () => {
     dispatchStories({type: 'REMOVE_STORY', payload: item});
   };
 
-  const searchedStories = stories.filter(story =>
+  const searchedStories = stories.data.filter(story =>
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const renderedStories = () => {
-    if (isError) {
-      return <Error />;
-    }
-    if (isLoading) {
-      return <Loading />;
-    }
-
-    return <List list={searchedStories} onRemoveItem={handleRemoveItem} />;
-  };
 
   return (
     <div className="container mt-2">
       <AppHeader />
-
-      <p>
-        <strong>Count: {countState.count}</strong>
-      </p>
-      <button onClick={() => dispatchCount({type: 'INCREMENT'})}>
-        Increment
-      </button>
-      <button onClick={() => dispatchCount({type: 'DECREMENT'})}>
-        Decrement
-      </button>
-
       <InputLabel
         id="search"
         label="Search"
         value={searchTerm}
         onInputChange={handleSearch}
       />
-
       <Separator />
-
-      {renderedStories()}
+      {stories.isError && <Error />}
+      {stories.isLoading && <Loading />}
+      {!stories.isLoading && !stories.isError && (
+        <List list={searchedStories} onRemoveItem={handleRemoveItem} />
+      )}
     </div>
   );
 };
