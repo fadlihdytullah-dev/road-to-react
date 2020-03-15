@@ -43,6 +43,11 @@ const initialStories = [
   },
 ];
 
+const getFormattedDate = value => {
+  const date = new Date(value);
+  return `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
+};
+
 const getAsyncStories = () =>
   new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -103,18 +108,22 @@ const App = () => {
     isError: false,
   });
 
+  const [searchTerm, setSearchTerm] = useState('');
+
   useEffect(() => {
+    if (!searchTerm) {
+      return;
+    }
+
     dispatchStories({type: 'STORIES_FETCH_INIT'});
 
-    fetch(`${API_ENDPOINT}react`)
+    fetch(`${API_ENDPOINT}${searchTerm}`)
       .then(response => response.json())
       .then(result => {
         dispatchStories({type: 'STORIES_FETCH_SUCCESS', payload: result.hits});
       })
       .catch(() => dispatchStories({type: 'STORIES_FETCH_FAILURE'}));
-  }, []);
-
-  const [searchTerm, setSearchTerm] = useState('');
+  }, [searchTerm]);
 
   const handleSearch = event => {
     setSearchTerm(event.target.value);
@@ -141,7 +150,7 @@ const App = () => {
       {stories.isError && <Error />}
       {stories.isLoading && <Loading />}
       {!stories.isLoading && !stories.isError && (
-        <List list={searchedStories} onRemoveItem={handleRemoveItem} />
+        <List list={stories.data} onRemoveItem={handleRemoveItem} />
       )}
     </div>
   );
@@ -209,15 +218,19 @@ const List = ({list, onRemoveItem}) => {
 
 const Item = ({item, onRemoveItem}) => (
   <div className="flex">
-    <div className="paper p-2 mb-2 flex flex-1 justify-space-between align-items-center">
-      <div>
-        <span className="paper-title">
+    <div className="paper p-3 mb-2 flex flex-1 justify-space-between align-items-center">
+      <div className="max-width-80">
+        <span className="text-lg block mb-1">
           <a href={item.url}>{item.title}</a>
         </span>
-        <span className="text-muted">
-          author: <span className="semibold">{item.author}</span>
+        <span className="text-muted block">
+          by: <span className="semibold">{item.author}</span>
+          <span className="text-muted ml-1">
+            {getFormattedDate(item.created_at_i)}
+          </span>
         </span>
       </div>
+
       <div className="flex text-muted">
         <div className="flex align-items-center mr-2">
           <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
