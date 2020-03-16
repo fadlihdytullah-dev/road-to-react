@@ -46,7 +46,7 @@ const initialStories = [
 ];
 
 const getFormattedDate = value => {
-  const date = new Date(value);
+  const date = new Date(value * 1000);
   return `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
 };
 
