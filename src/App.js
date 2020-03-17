@@ -6,6 +6,28 @@ import './FlexboxGrid.css';
 import styles from './CSSModule.module.css';
 import cs from 'classnames';
 import {ReactComponent as Check} from './check.svg';
+import styled from 'styled-components';
+
+const Button = styled.button`
+  text-align: center;
+  min-width: 12rem;
+  padding: 1rem 0;
+  background: #fff;
+  color: rgb(12, 52, 75);
+  display: inline-block;
+  border-radius: 8px;
+  color: rgb(61, 88, 102);
+  font-size: 1.4rem;
+  font-weight: 500;
+  outline: none;
+  border: none;
+  transition: 0.3s all;
+
+  &:disabled,
+  &[disabled] {
+    background: #c7c7c7 !important;
+  }
+`;
 
 const appInfo = {
   title: 'HackerStories',
@@ -188,13 +210,16 @@ const SearchForm = ({searchTerm, onSearchInput, onSearchSubmit}) => (
       />
     </div>
     <div className="pl-2 align-self-center">
-      <button
+      <Button type="submit" disabled={!searchTerm}>
+        Search
+      </Button>
+      {/* <button
         type="submit"
         disabled={!searchTerm}
         // className={`${styles.button} ${styles.small} ${styles.secondary}`}>
         className={cs(styles.button, styles.small, styles.secondary)}>
         Search
-      </button>
+      </button> */}
     </div>
   </form>
 );
