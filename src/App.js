@@ -127,12 +127,18 @@ const getAsyncStories = () =>
   });
 
 const useSemiPersistentState = (key, initValue) => {
+  const isMounted = React.useRef(false);
+
   const [value, setValue] = React.useState(
     localStorage.getItem(key) || initValue
   );
 
   React.useEffect(() => {
-    localStorage.setItem(key, value);
+    if (!isMounted.current) {
+      isMounted.current = true;
+    } else {
+      localStorage.setItem(key, value);
+    }
   }, [key, value]);
 
   return [value, setValue];
@@ -171,9 +177,17 @@ const storiesReducer = (state, action) => {
   }
 };
 
+const getSumComments = stories => {
+  console.log('C');
+
+  return stories.reduce((result, value) => result + value.num_comments, 0);
+};
+
 const API_ENDPOINT = 'http://hn.algolia.com/api/v1/search?query=';
 
 const App = () => {
+  console.log('B:App');
+
   const [stories, dispatchStories] = React.useReducer(storiesReducer, {
     data: [],
     isLoading: false,
@@ -182,6 +196,10 @@ const App = () => {
 
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
   const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
+
+  const sumComments = React.useMemo(() => getSumComments(stories.data), [
+    stories,
+  ]);
 
   // This will be differ when the saerchTerm changed, run the side effect
   const handleFetchStories = React.useCallback(async () => {
@@ -212,9 +230,9 @@ const App = () => {
     event.preventDefault();
   };
 
-  const handleRemoveItem = item => {
+  const handleRemoveItem = React.useCallback(item => {
     dispatchStories({type: 'REMOVE_STORY', payload: item});
-  };
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -224,6 +242,9 @@ const App = () => {
         onSearchInput={handleSearchInput}
         onSearchSubmit={handleSearchSubmit}
       />
+
+      <p>My Hacker Stories with {sumComments} comments.</p>
+
       <Separator />
       {stories.isError && <Error />}
       {stories.isLoading && <Loading />}
@@ -236,12 +257,12 @@ const App = () => {
 
 const Separator = () => <hr className="separator" />;
 
-const AppHeader = () => (
+const AppHeader = React.memo(() => (
   <React.Fragment>
     <h1>{appInfo.title}</h1>
     <h3 className="nobold">{appInfo.subtitle}</h3>
   </React.Fragment>
-);
+));
 
 const SearchForm = ({searchTerm, onSearchInput, onSearchSubmit}) => (
   <form className="flex align-items-center" onSubmit={onSearchSubmit}>
@@ -261,12 +282,12 @@ const SearchForm = ({searchTerm, onSearchInput, onSearchSubmit}) => (
         Search
       </Button>
       {/* <button
-        type="submit"
-        disabled={!searchTerm}
-        // className={`${styles.button} ${styles.small} ${styles.secondary}`}>
-        className={cs(styles.button, styles.small, styles.secondary)}>
-        Search
-      </button> */}
+          type="submit"
+          disabled={!searchTerm}
+          // className={`${styles.button} ${styles.small} ${styles.secondary}`}>
+          className={cs(styles.button, styles.small, styles.secondary)}>
+          Search
+        </button> */}
     </div>
   </form>
 );
@@ -314,7 +335,9 @@ const InputLabel = ({
 
 const Text = ({children}) => <span>{children}</span>;
 
-const List = ({list, onRemoveItem}) => {
+const List = React.memo(({list, onRemoveItem}) => {
+  console.log('B:List');
+
   if (!list.length) {
     return <EmptyData />;
   }
@@ -322,7 +345,26 @@ const List = ({list, onRemoveItem}) => {
   return list.map(item => (
     <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
   ));
-};
+});
+
+// Using PureComponent
+/*
+class List extends React.PureComponent {
+  render() {
+    if (!this.props.list.length) {
+      return <EmptyData />;
+    }
+
+    return this.props.list.map(item => (
+      <Item
+        key={item.objectID}
+        item={item}
+        onRemoveItem={this.props.onRemoveItem}
+      />
+    ));
+  }
+}
+*/
 
 const Item = ({item, onRemoveItem}) => (
   <div className="flex">
