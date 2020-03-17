@@ -1,14 +1,69 @@
-import React from 'react';
+import * as React from 'react';
 import axios from 'axios';
 
 import './App.css';
 import './FlexboxGrid.css';
 import styles from './CSSModule.module.css';
-import cs from 'classnames';
+// import cs from 'classnames';
 import {ReactComponent as Check} from './check.svg';
 import styled, {css} from 'styled-components';
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'ion-icon': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      >;
+    }
+  }
+}
 
-const getSizeMatcherStyles = size => {
+type Size = 'normal' | 'small';
+type Variant = 'default' | 'secondary';
+
+type Story = {
+  objectID: string | number;
+  url: string;
+  title: string;
+  author: string;
+  points: number;
+  num_comments: number;
+  created_at_i: number;
+};
+
+interface StoriesFetchInitAction {
+  type: 'STORIES_FETCH_INIT';
+}
+
+interface StoriesFetchSuccessAction {
+  type: 'STORIES_FETCH_SUCCESS';
+  payload: Stories;
+}
+
+interface StoriesFetchFailureAction {
+  type: 'STORIES_FETCH_FAILURE';
+}
+
+interface StoriesRemoveAction {
+  type: 'REMOVE_STORY';
+  payload: Story;
+}
+
+type Stories = Array<Story>;
+
+type StoriesState = {
+  data: Array<Story>;
+  isLoading: boolean;
+  isError: boolean;
+};
+
+type StoriesAction =
+  | StoriesFetchInitAction
+  | StoriesFetchSuccessAction
+  | StoriesFetchFailureAction
+  | StoriesRemoveAction;
+
+const getSizeMatcherStyles = (size: Size) => {
   switch (size) {
     case 'normal':
       return css`
@@ -23,11 +78,11 @@ const getSizeMatcherStyles = size => {
       `;
 
     default:
-      throw new Error();
+      return '';
   }
 };
 
-const getVariantMatcherStyles = variant => {
+const getVariantMatcherStyles = (variant: Variant) => {
   const variants = {
     default: css`
       background: #fff;
@@ -48,11 +103,13 @@ const getVariantMatcherStyles = variant => {
 
 const Button = styled.button`
   ${props => {
+    // @ts-ignore
     const size = props.size || 'normal';
     return getSizeMatcherStyles(size);
   }};
 
   ${props => {
+    // @ts-ignore
     const variant = props.variant || 'default';
     return getVariantMatcherStyles(variant);
   }};
@@ -113,7 +170,7 @@ const initialStories = [
   },
 ];
 
-const getFormattedDate = value => {
+const getFormattedDate = (value: number): string => {
   const date = new Date(value * 1000);
   return `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
 };
@@ -126,7 +183,10 @@ const getAsyncStories = () =>
     }, 2000);
   });
 
-const useSemiPersistentState = (key, initValue) => {
+const useSemiPersistentState = (
+  key: string,
+  initValue: string
+): [string, (newValue: string) => void] => {
   const isMounted = React.useRef(false);
 
   const [value, setValue] = React.useState(
@@ -144,7 +204,7 @@ const useSemiPersistentState = (key, initValue) => {
   return [value, setValue];
 };
 
-const storiesReducer = (state, action) => {
+const storiesReducer = (state: StoriesState, action: StoriesAction) => {
   switch (action.type) {
     case 'STORIES_FETCH_INIT':
       return {
@@ -173,11 +233,11 @@ const storiesReducer = (state, action) => {
       };
 
     default:
-      throw new Error();
+      return '';
   }
 };
 
-const getSumComments = stories => {
+const getSumComments = (stories: Stories) => {
   console.log('C');
 
   return stories.reduce((result, value) => result + value.num_comments, 0);
@@ -185,14 +245,20 @@ const getSumComments = stories => {
 
 const API_ENDPOINT = 'http://hn.algolia.com/api/v1/search?query=';
 
+const initialState = {
+  data: [],
+  isLoading: false,
+  isError: false,
+};
+
 const App = () => {
   console.log('B:App');
 
-  const [stories, dispatchStories] = React.useReducer(storiesReducer, {
-    data: [],
-    isLoading: false,
-    isError: false,
-  });
+  // @ts-ignore
+  const [stories, dispatchStories] = React.useReducer(
+    storiesReducer,
+    initialState
+  );
 
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
   const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
@@ -220,17 +286,17 @@ const App = () => {
     handleFetchStories();
   }, [handleFetchStories]);
 
-  const handleSearchInput = event => {
+  const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  const handleSearchSubmit = event => {
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     setUrl(`${API_ENDPOINT}${searchTerm}`);
 
     event.preventDefault();
   };
 
-  const handleRemoveItem = React.useCallback(item => {
+  const handleRemoveItem = React.useCallback((item: Story) => {
     dispatchStories({type: 'REMOVE_STORY', payload: item});
   }, []);
 
@@ -249,6 +315,7 @@ const App = () => {
       {stories.isError && <Error />}
       {stories.isLoading && <Loading />}
       {!stories.isLoading && !stories.isError && (
+        // @ts-ignore
         <List list={stories.data} onRemoveItem={handleRemoveItem} />
       )}
     </div>
@@ -264,7 +331,16 @@ const AppHeader = React.memo(() => (
   </React.Fragment>
 ));
 
-const SearchForm = ({searchTerm, onSearchInput, onSearchSubmit}) => (
+type SearchFormProps = {
+  searchTerm: string;
+  onSearchInput: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+};
+const SearchForm = ({
+  searchTerm,
+  onSearchInput,
+  onSearchSubmit,
+}: SearchFormProps) => (
   <form className="flex align-items-center" onSubmit={onSearchSubmit}>
     <div className="flex-1">
       <InputLabel
@@ -277,6 +353,7 @@ const SearchForm = ({searchTerm, onSearchInput, onSearchSubmit}) => (
       <Button
         type="submit"
         disabled={!searchTerm}
+        // @ts-ignore
         size="small"
         variant="secondary">
         Search
@@ -298,6 +375,14 @@ const Error = () => <h2>Oops, something went wrong.</h2>;
 
 const EmptyData = () => <p>Sorry, there is no data.</p>;
 
+type InputLabelProps = {
+  id: string;
+  value: string;
+  type?: string;
+  label?: string;
+  isFocused?: boolean;
+  onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+};
 const InputLabel = ({
   id,
   value,
@@ -305,8 +390,8 @@ const InputLabel = ({
   label = '',
   isFocused = false,
   onInputChange,
-}) => {
-  const inputRef = React.useRef();
+}: InputLabelProps) => {
+  const inputRef = React.useRef<HTMLInputElement>(null!);
 
   React.useEffect(() => {
     if (isFocused && inputRef.current) {
@@ -333,9 +418,15 @@ const InputLabel = ({
   );
 };
 
-const Text = ({children}) => <span>{children}</span>;
+const Text = ({children}: {children: React.ReactNode}) => (
+  <span>{children}</span>
+);
 
-const List = React.memo(({list, onRemoveItem}) => {
+type ListProps = {
+  list: Stories;
+  onRemoveItem: (item: Story) => void;
+};
+const List = ({list, onRemoveItem}: ListProps) => {
   console.log('B:List');
 
   if (!list.length) {
@@ -345,7 +436,7 @@ const List = React.memo(({list, onRemoveItem}) => {
   return list.map(item => (
     <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
   ));
-});
+};
 
 // Using PureComponent
 /*
@@ -366,7 +457,11 @@ class List extends React.PureComponent {
 }
 */
 
-const Item = ({item, onRemoveItem}) => (
+type ItemProps = {
+  item: Story;
+  onRemoveItem: (item: Story) => void;
+};
+const Item = ({item, onRemoveItem}: ItemProps) => (
   <div className="flex">
     <div className="paper p-3 mb-2 flex flex-1 justify-space-between align-items-center">
       <div className="max-width-80">
@@ -383,11 +478,15 @@ const Item = ({item, onRemoveItem}) => (
 
       <div className="flex text-muted">
         <div className="flex align-items-center mr-2">
-          <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+          {/* 
+  // @ts-ignore */}
+          <ion-icon name="chatbubble-ellipses-outline" />
           <span>{item.num_comments}</span>
         </div>
 
         <div className="flex align-items-center">
+          {/* 
+  // @ts-ignore */}
           <ion-icon name="star-outline"></ion-icon>
           <span>{item.points}</span>
         </div>
