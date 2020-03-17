@@ -1,9 +1,11 @@
 import React from 'react';
+import axios from 'axios';
+
 import './App.css';
 import './FlexboxGrid.css';
 import styles from './CSSModule.module.css';
 import cs from 'classnames';
-import axios from 'axios';
+import {ReactComponent as Check} from './check.svg';
 
 const appInfo = {
   title: 'HackerStories',
@@ -280,7 +282,7 @@ const Item = ({item, onRemoveItem}) => (
 
     <div className="pl-2  align-self-center">
       <button className="button small link" onClick={() => onRemoveItem(item)}>
-        <ion-icon name="trash-outline"></ion-icon>
+        <Check height="18" width="18" />
       </button>
     </div>
   </div>

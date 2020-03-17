@@ -4,6 +4,11 @@
   padding: 0;
 }
 
+.button:hover > svg > g {
+  fill: #faba4c;
+  stroke: #faba4c;
+}
+
 html {
   font-size: 10px;
 }
