@@ -6,18 +6,61 @@ import './FlexboxGrid.css';
 import styles from './CSSModule.module.css';
 import cs from 'classnames';
 import {ReactComponent as Check} from './check.svg';
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
+
+const getSizeMatcherStyles = size => {
+  switch (size) {
+    case 'normal':
+      return css`
+        font-size: 1.4rem;
+        min-width: 12rem;
+      `;
+
+    case 'small':
+      return css`
+        min-width: 8rem;
+        font-size: 1.2rem;
+      `;
+
+    default:
+      throw new Error();
+  }
+};
+
+const getVariantMatcherStyles = variant => {
+  const variants = {
+    default: css`
+      background: #fff;
+    `,
+
+    secondary: css`
+      background: #222;
+      color: #fff;
+
+      &:hover {
+        background: #111;
+      }
+    `,
+  };
+
+  return variants[variant];
+};
 
 const Button = styled.button`
-  text-align: center;
-  min-width: 12rem;
+  ${props => {
+    const size = props.size || 'normal';
+    return getSizeMatcherStyles(size);
+  }};
+
+  ${props => {
+    const variant = props.variant || 'default';
+    return getVariantMatcherStyles(variant);
+  }};
+
   padding: 1rem 0;
-  background: #fff;
-  color: rgb(12, 52, 75);
+  text-align: center;
   display: inline-block;
   border-radius: 8px;
-  color: rgb(61, 88, 102);
-  font-size: 1.4rem;
   font-weight: 500;
   outline: none;
   border: none;
@@ -210,7 +253,11 @@ const SearchForm = ({searchTerm, onSearchInput, onSearchSubmit}) => (
       />
     </div>
     <div className="pl-2 align-self-center">
-      <Button type="submit" disabled={!searchTerm}>
+      <Button
+        type="submit"
+        disabled={!searchTerm}
+        size="small"
+        variant="secondary">
         Search
       </Button>
       {/* <button
