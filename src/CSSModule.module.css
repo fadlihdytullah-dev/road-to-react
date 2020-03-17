@@ -1,0 +1,37 @@
+.container {
+  width: 95rem;
+  padding: 0 0.8rem;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.button {
+  text-align: center;
+  min-width: 12rem;
+  padding: 1rem 0;
+  background: #fff;
+  color: rgb(12, 52, 75);
+  display: inline-block;
+  border-radius: 8px;
+  color: rgb(61, 88, 102);
+  font-size: 1.4rem;
+  font-weight: 500;
+  outline: none;
+  border: none;
+  transition: 0.3s all;
+}
+.button:disabled,
+.button[disabbled] {
+  background: #c7c7c7 !important;
+}
+.button.small {
+  font-size: 1.2rem;
+  min-width: 8rem;
+}
+.button.secondary {
+  background: #222;
+  color: #fff;
+}
+.button.secondary:hover {
+  background: #111;
+}

@@ -1,7 +1,8 @@
 import React from 'react';
 import './App.css';
 import './FlexboxGrid.css';
-
+import styles from './CSSModule.module.css';
+import cs from 'classnames';
 import axios from 'axios';
 
 const appInfo = {
@@ -149,7 +150,7 @@ const App = () => {
   };
 
   return (
-    <div className="container mt-2">
+    <div className={styles.container}>
       <AppHeader />
       <SearchForm
         searchTerm={searchTerm}
@@ -184,11 +185,12 @@ const SearchForm = ({searchTerm, onSearchInput, onSearchSubmit}) => (
         onInputChange={onSearchInput}
       />
     </div>
-    <div className="pl-2">
+    <div className="pl-2 align-self-center">
       <button
         type="submit"
         disabled={!searchTerm}
-        className="button small secondary align-self-center">
+        // className={`${styles.button} ${styles.small} ${styles.secondary}`}>
+        className={cs(styles.button, styles.small, styles.secondary)}>
         Search
       </button>
     </div>
